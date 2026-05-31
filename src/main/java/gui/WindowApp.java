@@ -20,10 +20,6 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Графическое приложение на JavaFX
- * Использует тот же DataProcessor что и консольное приложение
- */
 public class WindowApp extends Application {
 
     private DataProcessor processor;
@@ -33,67 +29,53 @@ public class WindowApp extends Application {
     private Label infoLabel;
 
     public static void main(String[] args) {
-        // Запуск JavaFX приложения
         launch(args);
     }
 
     @Override
     public void init() {
-        // Инициализация процессора (вызывается до старта приложения)
         processor = new DataProcessor();
         System.out.println("WindowApp инициализирован");
     }
 
     @Override
     public void start(Stage primaryStage) {
-        // Настройка главного окна
         primaryStage.setTitle("Обработчик данных - Вариант 17 (Максимальное произведение пары чисел)");
         primaryStage.setMinWidth(700);
         primaryStage.setMinHeight(500);
 
-        // Создание главного контейнера
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10));
         root.setStyle("-fx-background-color: #f5f5f5;");
 
-        // Создание верхней панели с заголовком
         VBox topPanel = createTopPanel();
         root.setTop(topPanel);
 
-        // Создание центральной панели с вводом и выводом
         SplitPane centerPane = createCenterPane();
         root.setCenter(centerPane);
 
-        // Создание нижней панели с кнопками и статусом
         VBox bottomPanel = createBottomPanel(primaryStage);
         root.setBottom(bottomPanel);
 
-        // Создание сцены и отображение окна
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
 
-        // Добавляем CSS стили (с обработкой возможного отсутствия файла)
         try {
             String css = getClass().getResource("/gui/style.css").toExternalForm();
             if (css != null) {
                 scene.getStylesheets().add(css);
             }
         } catch (Exception e) {
-            // Если файл стилей не найден, просто продолжаем без него
             System.out.println("Файл стилей не найден, используются стандартные стили");
         }
 
         primaryStage.show();
 
-        // Вместо загрузки примера из кода, предлагаем загрузить из файла
         infoLabel.setText("Нажмите 'Загрузить из файла' для выбора файла с числами");
 
         System.out.println("WindowApp запущен");
     }
 
-    /**
-     * Создает верхнюю панель с заголовком и информацией
-     */
     private VBox createTopPanel() {
         VBox topPanel = new VBox(5);
         topPanel.setPadding(new Insets(0, 0, 10, 0));
@@ -108,14 +90,10 @@ public class WindowApp extends Application {
         return topPanel;
     }
 
-    /**
-     * Создает центральную панель с областями ввода и вывода
-     */
     private SplitPane createCenterPane() {
         SplitPane splitPane = new SplitPane();
         splitPane.setDividerPositions(0.5);
 
-        // Левая панель - ввод данных
         VBox leftPanel = new VBox(5);
         leftPanel.setPadding(new Insets(10));
         leftPanel.setStyle("-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;");
@@ -128,11 +106,9 @@ public class WindowApp extends Application {
         inputArea.setWrapText(true);
         inputArea.setStyle("-fx-font-family: 'Courier New'; -fx-font-size: 13px;");
 
-        // Счетчик строк
         Label lineCountLabel = new Label("Строк: 0");
         lineCountLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d;");
 
-        // Обновляем счетчик при изменении текста
         inputArea.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.isEmpty()) {
                 lineCountLabel.setText("Строк: 0");
@@ -145,7 +121,6 @@ public class WindowApp extends Application {
         leftPanel.getChildren().addAll(inputLabel, inputArea, lineCountLabel);
         VBox.setVgrow(inputArea, Priority.ALWAYS);
 
-        // Правая панель - вывод результатов
         VBox rightPanel = new VBox(5);
         rightPanel.setPadding(new Insets(10));
         rightPanel.setStyle("-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;");
@@ -164,43 +139,34 @@ public class WindowApp extends Application {
         return splitPane;
     }
 
-    /**
-     * Создает нижнюю панель с кнопками и статусом
-     */
     private VBox createBottomPanel(Stage stage) {
         VBox bottomPanel = new VBox(5);
         bottomPanel.setPadding(new Insets(10, 0, 0, 0));
 
-        // Панель с кнопками
         HBox buttonPanel = new HBox(10);
         buttonPanel.setPadding(new Insets(5, 0, 5, 0));
         buttonPanel.setStyle("-fx-alignment: center;");
 
-        // Кнопка обработки
         Button processButton = new Button("Обработать данные");
         processButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
         processButton.setPrefWidth(150);
         processButton.setOnAction(e -> processData());
 
-        // Кнопка загрузки из файла
         Button loadButton = new Button("Загрузить из файла");
         loadButton.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-cursor: hand;");
         loadButton.setPrefWidth(150);
         loadButton.setOnAction(e -> loadFromFile(stage));
 
-        // Кнопка сохранения в файл
         Button saveButton = new Button("Сохранить результат");
         saveButton.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-cursor: hand;");
         saveButton.setPrefWidth(150);
         saveButton.setOnAction(e -> saveToFile(stage));
 
-        // Кнопка очистки
         Button clearButton = new Button("Очистить всё");
         clearButton.setStyle("-fx-background-color: #e67e22; -fx-text-fill: white; -fx-cursor: hand;");
         clearButton.setPrefWidth(150);
         clearButton.setOnAction(e -> clearAll());
 
-        // Кнопка выхода
         Button exitButton = new Button("Выход");
         exitButton.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white; -fx-cursor: hand;");
         exitButton.setPrefWidth(100);
@@ -210,7 +176,6 @@ public class WindowApp extends Application {
                 processButton, loadButton, saveButton, clearButton, exitButton
         );
 
-        // Панель статуса
         statusLabel = new Label("Готов к работе. Загрузите файл с числами из папки test/");
         statusLabel.setStyle("-fx-font-size: 12px; -fx-font-style: italic; -fx-padding: 5; -fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-radius: 3;");
 
@@ -218,12 +183,6 @@ public class WindowApp extends Application {
         return bottomPanel;
     }
 
-    /**
-     * Загружает данные из файла
-     */
-    /**
-     * Загружает данные из файла
-     */
     private void loadFromFile(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Выберите файл с числами");
@@ -232,12 +191,10 @@ public class WindowApp extends Application {
                 new FileChooser.ExtensionFilter("Все файлы", "*.*")
         );
 
-        // Устанавливаем начальную директорию (папка test, если существует)
         File testDir = new File("test");
         if (testDir.exists()) {
             fileChooser.setInitialDirectory(testDir);
         } else {
-            // Если папки test нет, создаём её
             boolean created = testDir.mkdirs();
             if (created) {
                 System.out.println("Создана папка test");
@@ -251,10 +208,8 @@ public class WindowApp extends Application {
                 System.out.println("Выбран файл: " + selectedFile.getAbsolutePath());
                 System.out.println("Размер файла: " + selectedFile.length() + " байт");
 
-                // Читаем файл с указанием кодировки UTF-8
                 List<String> lines = Files.readAllLines(selectedFile.toPath(), java.nio.charset.StandardCharsets.UTF_8);
 
-                // Фильтруем пустые строки
                 List<String> nonEmptyLines = new ArrayList<>();
                 for (String line : lines) {
                     String trimmed = line.trim();
@@ -268,7 +223,6 @@ public class WindowApp extends Application {
                     return;
                 }
 
-                // Формируем содержимое для отображения
                 StringBuilder content = new StringBuilder();
                 for (String line : nonEmptyLines) {
                     content.append(line).append("\n");
@@ -279,7 +233,6 @@ public class WindowApp extends Application {
                         " (" + nonEmptyLines.size() + " чисел)");
                 infoLabel.setText("Файл загружен. Нажмите 'Обработать данные'");
 
-                // Показываем первые несколько чисел в консоли для отладки
                 System.out.println("Загружены числа:");
                 for (int i = 0; i < Math.min(5, nonEmptyLines.size()); i++) {
                     System.out.println("  " + nonEmptyLines.get(i));
@@ -294,16 +247,13 @@ public class WindowApp extends Application {
 
             } catch (IOException e) {
                 System.err.println("Ошибка ввода/вывода: " + e.getMessage());
-                e.printStackTrace();  // Для отладки
+                e.printStackTrace();
                 showAlert("Ошибка", "Не удалось загрузить файл: " + e.getMessage());
                 statusLabel.setText("Ошибка загрузки файла");
             }
         }
     }
 
-    /**
-     * Сохраняет результаты в файл
-     */
     private void saveToFile(Stage stage) {
         if (resultList.getItems().isEmpty()) {
             showAlert("Предупреждение", "Нет результатов для сохранения");
@@ -317,7 +267,6 @@ public class WindowApp extends Application {
         );
         fileChooser.setInitialFileName("result.txt");
 
-        // Устанавливаем начальную директорию (папка output, если существует)
         File outputDir = new File("output");
         if (!outputDir.exists()) {
             outputDir.mkdirs();
@@ -338,15 +287,10 @@ public class WindowApp extends Application {
         }
     }
 
-    /**
-     * Обрабатывает введенные данные
-     */
     private void processData() {
         try {
-            // Получаем текст из TextArea
             String input = inputArea.getText();
 
-            // Проверяем, есть ли данные
             if (input == null || input.trim().isEmpty()) {
                 showAlert("Ошибка", "Введите данные для обработки или загрузите файл");
                 statusLabel.setText("Ошибка: нет данных для обработки");
@@ -354,10 +298,8 @@ public class WindowApp extends Application {
                 return;
             }
 
-            // Разделяем текст на строки
             String[] lines = input.split("\\n");
 
-            // Фильтруем пустые строки
             List<String> nonEmptyLines = new ArrayList<>();
             for (String line : lines) {
                 if (!line.trim().isEmpty()) {
@@ -374,10 +316,8 @@ public class WindowApp extends Application {
             statusLabel.setText("Обработка данных... (" + nonEmptyLines.size() + " строк)");
             infoLabel.setText("Обработка...");
 
-            // Используем тот же DataProcessor что и в консольном приложении!
             String[] result = processor.processPipeline(nonEmptyLines.toArray(new String[0]));
 
-            // Отображаем результаты
             displayResults(result, nonEmptyLines.size());
 
             statusLabel.setText("Обработка завершена. Найдена пара с максимальным произведением");
@@ -389,9 +329,6 @@ public class WindowApp extends Application {
         }
     }
 
-    /**
-     * Отображает результаты в ListView
-     */
     private void displayResults(String[] result, int inputSize) {
         ObservableList<String> items = FXCollections.observableArrayList();
 
@@ -420,9 +357,6 @@ public class WindowApp extends Application {
         resultList.setItems(items);
     }
 
-    /**
-     * Очищает все поля ввода и вывода
-     */
     private void clearAll() {
         inputArea.clear();
         resultList.getItems().clear();
@@ -430,17 +364,11 @@ public class WindowApp extends Application {
         infoLabel.setText("Загрузите файл с числами или введите их вручную");
     }
 
-    /**
-     * Закрывает приложение
-     */
     private void exitApplication() {
         System.out.println("WindowApp завершает работу");
         Platform.exit();
     }
 
-    /**
-     * Показывает диалоговое окно с ошибкой
-     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
