@@ -1,8 +1,8 @@
 package models;
 
 public class InputArgs {
-    private String inputFile;   // входной файл
-    private String outputFile;  // выходной файл (может быть null)
+    private String inputFile;
+    private String outputFile;
 
     public InputArgs() {
     }
