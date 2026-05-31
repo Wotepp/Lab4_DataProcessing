@@ -12,7 +12,7 @@ public class DataProcessor {
 
         if (input == null || input.size() < 2) {
             System.err.println("Ошибка: недостаточно данных для обработки");
-            return result; // возвращаем пустой список
+            return result;
         }
 
         double maxProduct = Double.NEGATIVE_INFINITY;
@@ -90,7 +90,6 @@ public class DataProcessor {
         for (int i = 0; i < doubles.size(); i++) {
             Double value = doubles.get(i);
             if (value != null) {
-                // Форматируем число: если целое - без десятичных знаков
                 if (value == Math.floor(value)) {
                     result[i] = String.format("%.0f", value);
                 } else {
